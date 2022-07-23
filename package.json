@@ -1,0 +1,30 @@
+{
+  "name": "leia_para_uma_crianca",
+  "version": "1.0.0",
+  "description": "Projeto Final do Curso de Back-End da Reprograma da Turma On-15",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeborahTorres19/Leia_para_uma_Crianca.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DeborahTorres19/Leia_para_uma_Crianca/issues"
+  },
+  "homepage": "https://github.com/DeborahTorres19/Leia_para_uma_Crianca#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongoose": "^6.4.6"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
