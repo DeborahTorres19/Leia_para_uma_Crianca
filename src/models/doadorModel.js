@@ -20,7 +20,7 @@ const DoadorSchema = mongoose.Schema({
         required: true
     },
     telefone:{
-        type: Number,
+        type: String,
         required: true
     },
     createdAt:{

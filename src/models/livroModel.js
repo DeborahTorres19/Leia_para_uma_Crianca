@@ -6,15 +6,15 @@ const LivroSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    texto:{
+    autor:{
+        type: String,
+        required: true
+    },
+    genero:{
         type: String,
         required: true
     },
     ilustracao:{
-        type: String,
-        required: true
-    },
-    tradutores:{
         type: String,
         required: true
     },
@@ -32,10 +32,6 @@ const LivroSchema = mongoose.Schema({
     },
     pais:{
         type: String,
-        required: true
-    },
-    paginas:{
-        type: Number,
         required: true
     },
     idDoador:{
