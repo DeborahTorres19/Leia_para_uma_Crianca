@@ -3,49 +3,36 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 
 const getAllDoador = async (req, res) => {
-    try {
-        const doador = await DoadorModel.find().select("-senha -cpf")
-        res.status(200).send({"message": `O doador ${doador} foi identificado com sucesso!`})
-    } catch (error) {
-        res.status(500).send(error.message)
-    }
+    DoadorModel.find(function (error, doadores){
+        if(error) {
+            res.status(500).send({message: error.message})
+        }
+            res.status(200).send(doadores)
+    })
 }
 
 const createDoador = async (req, res) => {
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10)
+    req.body.password = hashedPassword
+
+    if(emailExists) {
+        res.status(401).send({
+            "message": "Email já cadastrado"
+        })
+    }
+
     try {
         const newDoador = new DoadorModel(req.body)
         const savedDoador = await newDoador.save()
 
-        res.status(201).send({"message": `Doador ${savedDoador} criado com sucesso!`})
+        res.status(201).send({
+            "message": "Doador criado com sucesso!",
+            savedDoador
+        })
     } catch (error) {
-        res.status(500).send(error.message)
+        console.error(error)
     }
-    
-    // try {
-    //     const {email, password} = req.body
 
-    //     const userExistente = await DoadorModel.findOne({email: email})
-    //     if(userExistente){
-    //         return res.status(422).json({"Erro:" : "Esse email já está cadastrado."})
-    //     }
-
-    //     const salt = await bcryptgenSalt(12)
-    //     const passwordHash = await bcrypt.hash(password, salt)
-
-    //     const novoDoador = new DoadorModel({
-    //         nome:req.body.name,
-    //         cpf:req.body.cpf,
-    //         email:req.body.email,
-    //         senha:req.body.senha,
-    //         telefone:req.body.telefone
-    //     })
-
-    //     const doador = await novoDoador.save()
-    //     novoDoador.password = undefined
-    //     res.status(200).json({"message": `Doador ${novoDoador} cadastrado com sucesso!`})
-    // } catch (error) {
-    //     res.status(500).send(error.message)
-    // }
 }
 
 const updateDoador = async (req, res) => {
@@ -70,7 +57,10 @@ const deleteDoador = async (req,res) => {
     try {
         let doador = await DoadorModel.findById(req.params.id)
         doador.delete()
-        res.status(200).json({"message":`Doador ${doador} deletado com sucesso!`})
+        res.status(200).json({
+            "message":"Doador deletado com sucesso!",
+        doador
+        })
     } catch (error) {
         res.status(500).send(error.message)
     }

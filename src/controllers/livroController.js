@@ -1,7 +1,7 @@
 const LivroModel = require('../models/livroModel')
 const mongoose = require('mongoose')
 
-const getAllLivro = async (request, response) => {
+const getAllLivro = async (req, res) => {
     try {
         const livro = await LivroModel.find()
         res.status(200).send({"message": `Livro ${livro} localizado com sucesso!`})
@@ -10,7 +10,7 @@ const getAllLivro = async (request, response) => {
     }
 }
 
-const createLivro = async (request, response) => {
+const createLivro = async (req, res) => {
     try {
         const body = request.body
         const newLivro = await LivroModel.create(body)
@@ -20,7 +20,7 @@ const createLivro = async (request, response) => {
     }
 }
 
-const updateLivro = async (request, response) => {
+const updateLivro = async (req, res) => {
     try {
         let livro = await LivroModel.findById(req.params.id)
         if(livro){
@@ -45,7 +45,7 @@ const updateLivro = async (request, response) => {
     }
 }
 
-const deleteLivro = async (request, response) => {
+const deleteLivro = async (req, res) => {
     try {
         let livro = await LivroModel.findById(req.params.id)
         livro.delete()
@@ -55,7 +55,7 @@ const deleteLivro = async (request, response) => {
     }
 }
 
-const getByTitulo = async (request, response) => {
+const getByTitulo = async (req, res) => {
     try {
         const livro = await LivroModel.find({titulo: req.query.titulo})
         res.status(200).send({"message": `Livro ${livro} encontrado com sucesso!`})

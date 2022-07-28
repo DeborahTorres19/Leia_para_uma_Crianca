@@ -1,13 +1,13 @@
 const mongoose = require('mongoose')
 
 const DoadorSchema = mongoose.Schema({
-    _id: mongoose.Types.ObjectId,
+    id: mongoose.Types.ObjectId,
     nome:{
         type: String,
         required: true
     },
     cpf:{
-        type: Number,
+        type: String,
         required: true
     },
     email:{
@@ -15,7 +15,7 @@ const DoadorSchema = mongoose.Schema({
         required: true,
         unique: true
     },
-    senha:{
+    password:{
         type: String,
         required: true
     },
@@ -25,7 +25,7 @@ const DoadorSchema = mongoose.Schema({
     },
     createdAt:{
         type: Date,
-        required: new Date()
+        default: new Date()
     }
 })
 
