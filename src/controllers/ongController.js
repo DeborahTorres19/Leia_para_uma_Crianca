@@ -1,6 +1,5 @@
 const OngModel = require('../models/OngModel')
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+const { hashPassword } = require('../helpers/hashPassword')
 
 const getAllOng = async (req, res) => {
     OngModel.find(function (error, ongs){
@@ -12,28 +11,41 @@ const getAllOng = async (req, res) => {
 }
 
 const createOng = async (req, res) => {
-    const hashedPassword = bcrypt.hashSync(req.body.password, 10)
-    req.body.password = hashedPassword
-
-    const emailExists = await OngModel.exists({ email: req.body.email });
-
-    if(emailExists) {
-        res.status(401).send({
-            "message": "Email já cadastrado"
-        })
-    }
-    
     try {
-        const newOng = new OngModel(req.body)
-        const savedOng = await newOng.save()
+        const { nome, email, password, telefone, endereco, bairro, cidade, estado, createdAt } = req.body;
 
-        res.status(201).send({
-            "message": "Ong criada com sucesso!",
+        const newOng = new OngModel({
+            nome,
+            email,
+            password,
+            telefone,
+            endereco,
+            bairro,
+            cidade,
+            estado,
+            createdAt
+        });
+
+        const passwordHashed = await hashPassword(newOng.password, res)
+        newOng.password = passwordHashed
+
+        const ong = await OngModel.findOne({ email: req.body.email });
+
+        if (ong) {
+            res.status(400).json({ message: "Ong já cadastrada no sistema." })
+        }
+
+        const savedOng = await newOng.save();
+
+        res.status(201).json({
+            message: "Ong cadastrada com sucesso.",
             savedOng
         })
+
     } catch (error) {
-        console.error(error)
+        res.status(500).json({ message: error.message })
     }
+    
 }
 
 const updateOng = async (req, res) => {
@@ -68,7 +80,7 @@ const updateOng = async (req, res) => {
 const deleteOng = async (req, res) => {
     try {
         let ong = await OngModel.findById(req.params.id)
-        ong.delete()
+        await ong.delete()
         res.status(200).json({
             "message": "Ong delatada com sucesso!",
             ong

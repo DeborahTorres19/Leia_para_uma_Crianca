@@ -1,6 +1,5 @@
 const DoadorModel = require('../models/doadorModel')
-const mongoose = require('mongoose')
-const bcrypt = require('bcrypt')
+const { hashPassword } = require('../helpers/hashPassword')
 
 const getAllDoador = async (req, res) => {
     DoadorModel.find(function (error, doadores){
@@ -12,28 +11,36 @@ const getAllDoador = async (req, res) => {
 }
 
 const createDoador = async (req, res) => {
-    const hashedPassword = bcrypt.hashSync(req.body.password, 10)
-    req.body.password = hashedPassword
-
-    const emailExists = await DoadorModel.exists({ email: req.body.email });
-
-    if(emailExists) {
-        res.status(401).send({
-            "message": "Email já cadastrado"
-        })
-    }
-
     try {
-        const newDoador = new DoadorModel(req.body)
-        const savedDoador = await newDoador.save()
+        const { nome, cpf, email, password, telefone, createdAt } = req.body;
 
-        res.status(201).send({
-            "message": "Doador criado com sucesso!",
+        const newDoador = new DoadorModel({
+            nome,
+            cpf,
+            email,
+            password,
+            telefone
+        });
+
+        const passwordHashed = await hashPassword(newDoador.password, res)
+        newDoador.password = passwordHashed
+
+        const doador = await DoadorModel.findOne({ email: req.body.email });
+
+        if (doador) {
+            res.status(400).json({ message: "Doador já cadastrado no sistema" })
+        }
+
+        const savedDoador = await newDoador.save();
+
+        res.status(201).json({
+            message: "Doador cadastrado com sucesso.",
             savedDoador
         })
+
     } catch (error) {
-        console.error(error)
-    }
+        res.status(500).json({ message: error.message })
+    }    
 
 }
 

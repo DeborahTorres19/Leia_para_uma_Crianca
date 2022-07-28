@@ -1,5 +1,4 @@
 const LivroModel = require('../models/livroModel')
-const mongoose = require('mongoose')
 
 const getAllLivro = async (req, res) => {
     try {
@@ -55,7 +54,7 @@ const updateLivro = async (req, res) => {
 const deleteLivro = async (req, res) => {
     try {
         let livro = await LivroModel.findById(req.params.id)
-        livro.delete()
+        await livro.delete()
         res.status(200).json({
             "message": "Livro deletado com sucesso!",
             livro

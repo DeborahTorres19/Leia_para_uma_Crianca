@@ -2,74 +2,61 @@ const DoadorModel = require('../models/doadorModel')
 const OngModel = require('../models/OngModel')
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const SECRET = process.env.SECRET
 
-const loginDoador = (req, res) => {
+const loginDoador = async (req, res) => {
     try {
-        DoadorModel.findOne({ email: req.body.email }, (error, doador) => {
-            console.log("DOADOR", doador)
-            if(!doador) {
-                return res.status(401).send({
-                    message: "Doador não encontrado",
-                    email: `${req.body.email}`
-                })
-            }
-            const validPassword = bcrypt.compareSync(req.body.password, doador.password)
-            console.log("A SENHA É VÁLIDA?", validPassword)
+        const { email, password } = req.body
 
-            if(!validPassword) {
-                return res.status(401).send({
-                    "message": "Login não autorizado",
-                    "statusCode": 401
-                })
-            }
+        const doador = await DoadorModel.findOne({ email: email }).select("+password")
 
-            const token = jwt.sign({name: doador.name}, SECRET)
-            console.log("TOKEN CRIADO:", token)
+        if (!doador) {
+            return res.status(400).json({ message: "Email ou senha incorretos." })
+        }
 
-            res.status(200).send({
-                "message": "Login autorizado",
-                token
-            });
+        const checkPassword = await bcrypt.compare(password, doador.password)
 
+        if (!checkPassword) {
+            return res.status(400).json({ message: "Email ou senha incorretos." })
+        }
+        const SECRET = process.env.SECRET
+        const token = jwt.sign({ id: doador._id, email: doador.email }, SECRET)
+
+        res.status(200).json({
+            message: "Login efetuado com sucesso.",
+            token
         })
     } catch (error) {
-        console.error(error)
+        res.status(500).json({ message: error.message })
     }
+
 }
 
-const loginOng = (req, res) => {
+const loginOng = async (req, res) => {
     try {
-        OngModel.findOne({ email: req.body.email }, (error, ong) => {
-            console.log("ONG", ong)
-            if(!ong) {
-                return res.status(401).send({
-                    message: "Ong não encontrado",
-                    email: `${req.body.email}`
-                })
-            }
-            const validPassword = bcrypt.compareSync(req.body.password, ong.password)
-            console.log("A SENHA É VÁLIDA?", validPassword)
+        const { email, password } = req.body;
 
-            if(!validPassword) {
-                return res.status(401).send({
-                    "message": "Login não autorizado",
-                    "statusCode": 401
-                })
-            }
+        const ong = await OngModel.findOne({ email: email }).select("+password");
 
-            const token = jwt.sign({name: ong.name}, SECRET)
-            console.log("TOKEN CRIADO:", token)
+        if (!ong) {
+            return res.status(400).json({ message: "Email ou senha incorretos." })
+        };
 
-            res.status(200).send({
-                "message": "Login autorizado",
-                token
-            });
+        const checkPassword = await bcrypt.compare(password, ong.password);
 
+        if (!checkPassword) {
+            return res.status(400).json({ message: "Email ou senha incorretos." })
+        };
+        const SECRET = process.env.SECRET;
+        const token = jwt.sign({ id: ong._id, email: ong.email }, SECRET);
+
+        res.status(200).json({
+            message: "Login efetuado com sucesso.",
+            token
         })
     } catch (error) {
-        console.error(error)
+        res.status(500).json({ message: error.message })
     }
+    
 }
 
 module.exports = {
