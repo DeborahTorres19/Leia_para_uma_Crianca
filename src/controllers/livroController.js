@@ -4,17 +4,23 @@ const mongoose = require('mongoose')
 const getAllLivro = async (req, res) => {
     try {
         const livro = await LivroModel.find()
-        res.status(200).send({"message": `Livro ${livro} localizado com sucesso!`})
+        res.status(200).send({
+            "message": "Livros localizados com sucesso!",
+            livro 
+        })
     } catch (error) {
-        response.status(500).send(error.message)
+        res.status(500).send(error.message)
     }
 }
 
 const createLivro = async (req, res) => {
     try {
-        const body = request.body
+        const body = req.body
         const newLivro = await LivroModel.create(body)
-        res.status(201).json({"message": "Livro cadastrado com sucesso!", newLivro})
+        res.status(201).json({
+            "message": "Livro cadastrado com sucesso!", 
+            newLivro
+        })
     } catch (error) {
         res.status(500).send(error.message)
     }
@@ -35,7 +41,8 @@ const updateLivro = async (req, res) => {
             livro.idDoador = req.body.idDoador || livro.idDoador
             await livro.save()
             res.status(200).send({
-                "message": `Livro ${livro} atualizado com sucesso!`
+                "message": "Livro atualizado com sucesso!",
+                livro
             }) 
         } else {
             res.status(400).json({message:"Não foi possível encontrar esse livro."})
@@ -49,25 +56,19 @@ const deleteLivro = async (req, res) => {
     try {
         let livro = await LivroModel.findById(req.params.id)
         livro.delete()
-        res.status(200).json({"message":`Livro ${livro} deletado com sucesso!`})
+        res.status(200).json({
+            "message": "Livro deletado com sucesso!",
+            livro
+        })
     } catch (error) {
         res.status(500).send(error.message)
     }
 }
 
-const getByTitulo = async (req, res) => {
-    try {
-        const livro = await LivroModel.find({titulo: req.query.titulo})
-        res.status(200).send({"message": `Livro ${livro} encontrado com sucesso!`})
-    } catch (error) {
-        res.status(500).send(error.message)
-    }
-}
 
 module.exports = {
     getAllLivro,
     createLivro,
     updateLivro,
     deleteLivro,
-    getByTitulo
 }

@@ -8,7 +8,7 @@ const { checkAuth } = require("../middleware/auth")
 
 router.get('/all', checkAuth, controller.getAllDoador)
 router.post('/create', controller.createDoador)
-router.post('/login', authController.login)
+router.post('/login', authController.loginDoador)
 router.put('/update/:id', controller.updateDoador)
 router.delete('/delete/:id', checkAuth, controller.deleteDoador)
 

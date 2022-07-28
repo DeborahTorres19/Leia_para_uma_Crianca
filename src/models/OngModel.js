@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const OngSchema = mongoose.Schema({
-    _id: mongoose.Types.ObjectId,
+    id: mongoose.Types.ObjectId,
     nome:{
         type: String,
         required: true
@@ -11,12 +11,12 @@ const OngSchema = mongoose.Schema({
         required: true,
         unique: true
     },
-    senha:{
+    password:{
         type: String,
         required: true
     },
     telefone:{
-        type: Number,
+        type: String,
         required: true
     },
     endereco:{

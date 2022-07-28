@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 
 const LivroSchema = mongoose.Schema({
-    _id: mongoose.Types.ObjectId,
+    id: mongoose.Types.ObjectId,
     titulo:{
         type: String,
         required: true

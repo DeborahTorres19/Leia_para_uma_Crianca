@@ -15,6 +15,8 @@ const createDoador = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10)
     req.body.password = hashedPassword
 
+    const emailExists = await DoadorModel.exists({ email: req.body.email });
+
     if(emailExists) {
         res.status(401).send({
             "message": "Email já cadastrado"
@@ -42,11 +44,17 @@ const updateDoador = async (req, res) => {
             doador.nome = req.body.nome || doador.nome
             doador.cpf = req.body.cpf || doador.cpf
             doador.email = req.body.email || doador.email
+            doador.password = req.body.password || doador.password
             doador.telefone = req.body.telefone || doador.telefone
         await doador.save()
-        res.status(200).send({"message":`O doador ${doador} foi atualizado com sucesso!`})
+        res.status(201).send({
+            "message": "Doador atualizado com sucesso",
+            doador
+        })
         } else {
-            res.status(400).json({"message":"Não foi possível identificar esse doador."})
+            res.status(400).json({
+            "message": "Não foi possível identificar esse doador."
+        })
         }
     } catch (error) {
         res.status(500).send(error.message)
@@ -56,7 +64,7 @@ const updateDoador = async (req, res) => {
 const deleteDoador = async (req,res) => {
     try {
         let doador = await DoadorModel.findById(req.params.id)
-        doador.delete()
+        await doador.delete()
         res.status(200).json({
             "message":"Doador deletado com sucesso!",
         doador
